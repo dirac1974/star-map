@@ -96,8 +96,6 @@ function restoreFamily(code){
           applyCloudRow(row);
           if (i === 0) store.activeId = "u-"+row.username;
         });
-        if (typeof _saveStar === "function") _saveStar();
-        else saveStore();
         toast("Household restored — "+rows.length+" walker"+(rows.length===1?"":"s"));
         setTimeout(showProfiles, 400);
         return null;
@@ -130,4 +128,3 @@ if (typeof showParent === "function") {
     paintFamilyPanel();
   };
 }
-if (store && store.profiles && store.profiles.length) ensureFamily();
