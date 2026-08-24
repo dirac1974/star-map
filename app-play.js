@@ -65,6 +65,8 @@ function gradeLocate(id) {
 function askSpell(id) {
   mode = "spell";
   const s = STATES[id];
+  setMission("Spell the land you just found, and its capital star.");
+  renderMap();
   const sheet = document.getElementById("sheet");
   sheet.innerHTML =
     "<h2>Spell the names</h2><p>" + s.hook + "</p>" +
@@ -199,10 +201,10 @@ function showCreate() {
 }
 function createProfile() {
   const name = document.getElementById("new-name").value.trim() || "Map walker";
-  const avatar = document.getElementById("avatar-choices").dataset.selected || "⭐";
+  const avatar = document.getElementById("avatar-choices").dataset.selected || "\u2b50";
   const pin = (document.getElementById("new-pin") && document.getElementById("new-pin").value.trim()) || "";
   const username = slugName(name);
-  toast("Checking that name…");
+  toast("Checking that name\u2026");
   cloudGet(username).then(function (exists) {
     if (exists) {
       toast("That name is already on Star Map. Use Find my map.");
