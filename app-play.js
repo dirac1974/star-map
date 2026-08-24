@@ -193,22 +193,51 @@ function showCreate() {
     box.appendChild(s);
   });
   document.getElementById("new-name").value = "";
+  var pinEl = document.getElementById("new-pin");
+  if (pinEl) pinEl.value = "";
   showScreen("screen-create");
 }
 function createProfile() {
   const name = document.getElementById("new-name").value.trim() || "Map walker";
-  const avatar = document.getElementById("avatar-choices").dataset.selected || "\ud83c\udf1f";
-  const id = "u-" + name.toLowerCase().replace(/[^a-z0-9]+/g, "") + "-" + Date.now().toString().slice(-4);
-  store.profiles.push({ id: id, name: name, avatar: avatar, created: Date.now() });
-  store.activeId = id;
-  saveStore();
-  activeProg();
-  renderHome();
+  const avatar = document.getElementById("avatar-choices").dataset.selected || "⭐";
+  const pin = (document.getElementById("new-pin") && document.getElementById("new-pin").value.trim()) || "";
+  const username = slugName(name);
+  toast("Checking that name…");
+  cloudGet(username).then(function (exists) {
+    if (exists) {
+      toast("That name is already on Star Map. Use Find my map.");
+      return null;
+    }
+    return findAnyYomplePerson(username);
+  }).then(function (hit) {
+    if (hit === null) return;
+    if (hit && hit.row) {
+      if (hit.row.family_code) store.familyCode = hit.row.family_code;
+      adoptPerson({
+        username: hit.row.username,
+        display_name: hit.row.display_name,
+        avatar: hit.row.avatar || avatar,
+        pin: hit.row.pin || pin,
+        family_code: hit.row.family_code,
+        fun: hit.row.fun || {}
+      }, {});
+      toast("Same kid as the other Yomple worlds. Map starts fresh.");
+      setTimeout(renderHome, 400);
+      return;
+    }
+    ensureFamily();
+    const id = "u-" + username;
+    store.profiles.push({ id: id, name: name, avatar: avatar, username: username, pin: pin, created: Date.now() });
+    store.activeId = id;
+    saveStore();
+    activeProg();
+    toast("Welcome, " + name);
+    renderHome();
+  });
 }
 function showParent() {
   const body = document.getElementById("parent-body");
-  let html = "<p>Shining lands: " + shineCount() + " \u00b7 Family code stays on this screen only.</p>";
-  html += "<p><strong>" + (store.familyCode || "No household code yet \u2014 will adopt from a sister Yomple app.") + "</strong></p>";
+  let html = "<p>Shining lands: " + shineCount() + "</p>";
   html += "<table><tr><th>State</th><th>Capital</th><th>Where</th></tr>";
   STATE_IDS.forEach(function (id) {
     const s = STATES[id];
@@ -245,4 +274,7 @@ window.createProfile = createProfile;
 window.showParent = showParent;
 window.renderHome = renderHome;
 window.useHelp = useHelp;
+window.findHall = findHall;
+window.restoreFamily = restoreFamily;
+window.showRecover = showRecover;
 document.addEventListener("DOMContentLoaded", boot);
