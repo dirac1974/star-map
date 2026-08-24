@@ -12,9 +12,14 @@
     <div class="profiles">
       <h1>Who is walking the map?</h1>
       <div id="profile-grid" class="grid"></div>
-      <div class="row" style="justify-content:center;margin-top:18px">
-        <button class="primary" onclick="showCreate()">New walker</button>
+      <label style="display:block;margin:18px 0 6px;font-weight:700;color:var(--soft)">Use a name I already have</label>
+      <input id="find-user" type="text" placeholder="type the player name" maxlength="18"
+             style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit">
+      <div class="row" style="justify-content:center;margin-top:12px">
+        <button class="primary" onclick="findHall()">Find my map</button>
+        <button class="softbtn" onclick="showCreate()">New walker</button>
       </div>
+      <p style="text-align:center;margin-top:18px"><button class="ghost" onclick="showRecover()">Parent: recover household</button></p>
     </div>
   </div>
   <div id="screen-create" class="screen">
@@ -22,6 +27,8 @@
       <h1>New walker</h1>
       <label>Name</label>
       <input id="new-name" type="text" autocomplete="off" style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit">
+      <label style="display:block;margin-top:12px">Optional PIN</label>
+      <input id="new-pin" type="password" inputmode="numeric" maxlength="6" placeholder="4 digits" style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit">
       <p style="margin-top:14px;color:var(--soft);font-weight:700">Avatar</p>
       <div id="avatar-choices" class="avatars"></div>
       <div class="row">
@@ -80,9 +87,43 @@
   <div id="screen-parent" class="screen">
     <div class="parent">
       <h1>Parent / Progress</h1>
+      <p><strong>Family code</strong> (keep off kid screens)</p>
+      <p id="family-code-value" style="font-size:1.4rem;letter-spacing:.08em;font-weight:800;margin:6px 0 12px">—</p>
+      <label>Parent email (optional backup)</label>
+      <input id="parent-email" type="email" placeholder="you@example.com" style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit">
+      <div class="row">
+        <button class="softbtn" onclick="saveParentEmail()">Save email</button>
+        <button class="softbtn" onclick="emailCodeToMyself()">Email this code to me</button>
+        <button class="softbtn" onclick="cloudSaveActive()">Save now</button>
+      </div>
       <div id="parent-body"></div>
       <div class="row">
         <button class="primary" onclick="renderHome()">Back to the map</button>
+      </div>
+    </div>
+  </div>
+  <div id="screen-recover" class="screen">
+    <div class="parent">
+      <h1>Parent recovery</h1>
+      <p>Restore every walker on this device</p>
+      <p><strong>I have the family code</strong></p>
+      <input id="restore-code" type="text" placeholder="MAPLE-K7Q2" maxlength="16" style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit;text-transform:uppercase">
+      <div class="row">
+        <button class="primary" onclick="restoreFamily()">Restore household</button>
+      </div>
+      <p style="margin-top:18px"><strong>I forgot the code — email me</strong></p>
+      <input id="recover-email" type="email" placeholder="the parent email on file" style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit">
+      <div class="row">
+        <button class="softbtn" onclick="sendEmailOtp()">Send one-time code</button>
+      </div>
+      <div id="otp-row" style="display:none;margin-top:12px">
+        <input id="recover-otp" type="text" inputmode="numeric" placeholder="6-digit code" maxlength="8" style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit">
+        <div class="row">
+          <button class="primary" onclick="verifyEmailOtp()">Unlock household</button>
+        </div>
+      </div>
+      <div class="row">
+        <button class="ghost" onclick="showProfiles()">Back</button>
       </div>
     </div>
   </div>
@@ -92,5 +133,7 @@
   <script src="data.js"></script>
   <script src="app-core.js"></script>
   <script src="app-play.js"></script>
+  <script src="yomple-sync.js"></script>
+  <script src="yomple-family.js"></script>
 </body>
 </html>
