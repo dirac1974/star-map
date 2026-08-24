@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Star Map</title>
+  <meta name="description" content="A quiet map for learning the fifty states and capitals." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="screen-profiles" class="screen">
+    <div class="profiles">
+      <h1>Who is walking the map?</h1>
+      <div id="profile-grid" class="grid"></div>
+      <div class="row" style="justify-content:center;margin-top:18px">
+        <button class="primary" onclick="showCreate()">New walker</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-create" class="screen">
+    <div class="profiles">
+      <h1>New walker</h1>
+      <label>Name</label>
+      <input id="new-name" type="text" autocomplete="off" style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit">
+      <p style="margin-top:14px;color:var(--soft);font-weight:700">Avatar</p>
+      <div id="avatar-choices" class="avatars"></div>
+      <div class="row">
+        <button class="primary" onclick="createProfile()">Start</button>
+        <button class="ghost" onclick="showProfiles()">Back</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-home" class="screen">
+    <div class="top">
+      <div class="brand">
+        <div>
+          <h1>Star Map</h1>
+          <small>States and capitals</small>
+        </div>
+      </div>
+      <div id="who-badge" class="who"></div>
+    </div>
+    <div id="mission" class="mission">The map is waiting.</div>
+    <div class="map-wrap">
+      <svg id="map" viewBox="0 0 960 600" role="img" aria-label="United States map">
+        <rect x="0" y="0" width="960" height="600" fill="#f4fbff"></rect>
+        <g id="land"></g>
+        <g id="stars"></g>
+      </svg>
+    </div>
+    <div class="doors">
+      <button class="door" id="door-look" onclick="startLook()">
+        <span class="ic">🌙</span>
+        <span class="nm">Look around</span>
+        <span class="ds">Tap what you already know</span>
+      </button>
+      <button class="door" id="door-walk" onclick="startWalk()">
+        <span class="ic">🥾</span>
+        <span class="nm">Walk a room</span>
+        <span class="ds">See, find, spell</span>
+      </button>
+      <button class="door" id="door-light" onclick="startLight()">
+        <span class="ic">⭐</span>
+        <span class="nm">Light the stars</span>
+        <span class="ds">A short retrieval walk</span>
+      </button>
+      <button class="door" id="door-dress" onclick="startRehearse()">
+        <span class="ic">🕯️</span>
+        <span class="nm">Dress rehearsal</span>
+        <span class="ds">Blank map, two lanterns</span>
+      </button>
+    </div>
+    <div class="nav">
+      <button class="ghost" onclick="showProfiles()">Switch</button>
+      <button class="ghost" onclick="showParent()">Parent</button>
+      <button class="ghost" id="look-done" style="display:none" onclick="finishLook()">Done looking</button>
+      <button class="ghost" onclick="useHelp()">Use a lantern</button>
+    </div>
+  </div>
+
+  <div id="screen-parent" class="screen">
+    <div class="parent">
+      <h1>Parent / Progress</h1>
+      <div id="parent-body"></div>
+      <div class="row">
+        <button class="primary" onclick="renderHome()">Back to the map</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sheet" class="sheet"></div>
+  <div id="toast" class="toast"></div>
+
+  <script src="map-paths.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
