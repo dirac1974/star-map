@@ -1,4 +1,4 @@
-/* One hue per palace room. Progress (gold / mint) still sits on top. */
+/* One hue per palace room. Gold = cooking. Mint mix = solid / shining. */
 #map path.state { fill: var(--room, var(--land)); }
 #map path.state.rg-pacific { --room: #9fd9dc; }
 #map path.state.rg-high { --room: #e7c3a6; }
@@ -14,5 +14,36 @@
 }
 #map path.state.cooking { fill: #ffe08a; }
 #map path.state.solid {
-  fill: color-mix(in srgb, var(--room) 45%, #8 titl);
+  fill: color-mix(in srgb, var(--room) 42%, #8fd9c4);
 }
+#map path.state.shining {
+  fill: color-mix(in srgb, var(--room) 22%, #5ecfb3);
+}
+#map path.state.room {
+  fill: color-mix(in srgb, var(--room) 35%, #ffe08a);
+  stroke: #2B2A38;
+}
+#map path.state.ask { fill: #ffd54a; }
+#map path.state.miss { fill: #f3d6d1; }
+#map path.state.dim { opacity: 0.38; }
+
+.room-key {
+  display: flex; flex-wrap: wrap; gap: 6px 8px;
+  padding: 8px 10px 10px; justify-content: center;
+}
+.room-key .rk {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.72rem; font-weight: 700; color: var(--soft);
+  background: #fff; border-radius: 999px; padding: 4px 8px 4px 6px;
+}
+.room-key .rk i {
+  width: 10px; height: 10px; border-radius: 50%; display: block;
+}
+.rk-pacific i { background: #9fd9dc; }
+.rk-high i { background: #e7c3a6; }
+.rk-plains i { background: #ead48a; }
+.rk-lakes i { background: #b4d7c6; }
+.rk-river i { background: #e2b6a6; }
+.rk-low i { background: #cfe39a; }
+.rk-mid i { background: #d2c4e6; }
+.rk-tide i { background: #f1c98a; }
