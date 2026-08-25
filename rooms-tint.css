@@ -1,0 +1,18 @@
+/* One hue per palace room. Progress (gold / mint) still sits on top. */
+#map path.state { fill: var(--room, var(--land)); }
+#map path.state.rg-pacific { --room: #9fd9dc; }
+#map path.state.rg-high { --room: #e7c3a6; }
+#map path.state.rg-plains { --room: #ead48a; }
+#map path.state.rg-lakes { --room: #b4d7c6; }
+#map path.state.rg-river { --room: #e2b6a6; }
+#map path.state.rg-low { --room: #cfe39a; }
+#map path.state.rg-mid { --room: #d2c4e6; }
+#map path.state.rg-tide { --room: #f1c98a; }
+
+#map path.state.known {
+  fill: color-mix(in srgb, var(--room) 62%, #ffffff);
+}
+#map path.state.cooking { fill: #ffe08a; }
+#map path.state.solid {
+  fill: color-mix(in srgb, var(--room) 45%, #8 titl);
+}
