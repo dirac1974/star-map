@@ -1,31 +1,65 @@
-/* One hue per palace room. Gold = cooking. Mint mix = solid / shining. */
-#map path.state { fill: var(--room, var(--land)); }
-#map path.state.rg-pacific { --room: #9fd9dc; }
-#map path.state.rg-high { --room: #e7c3a6; }
-#map path.state.rg-plains { --room: #ead48a; }
-#map path.state.rg-lakes { --room: #b4d7c6; }
-#map path.state.rg-river { --room: #e2b6a6; }
-#map path.state.rg-low { --room: #cfe39a; }
-#map path.state.rg-mid { --room: #d2c4e6; }
-#map path.state.rg-tide { --room: #f1c98a; }
+/* Eight palace rooms. Color is the room, not the state.
+   Progress stays on stars and strokes so the map does not fight itself. */
+#map path.state.rg-pacific { fill: #7ec8cc; }
+#map path.state.rg-high { fill: #e4b07a; }
+#map path.state.rg-plains { fill: #e6d06a; }
+#map path.state.rg-lakes { fill: #8ebfe0; }
+#map path.state.rg-river { fill: #d9a08c; }
+#map path.state.rg-low { fill: #a8d07a; }
+#map path.state.rg-mid { fill: #b9a6d8; }
+#map path.state.rg-tide { fill: #f0b56a; }
 
-#map path.state.known {
-  fill: color-mix(in srgb, var(--room) 62%, #ffffff);
-}
-#map path.state.cooking { fill: #ffe08a; }
+#map path.state.known,
 #map path.state.solid {
-  fill: color-mix(in srgb, var(--room) 42%, #8fd9c4);
+  fill: unset;
 }
+#map path.state.rg-pacific.known, #map path.state.rg-pacific.solid { fill: #7ec8cc; }
+#map path.state.rg-high.known, #map path.state.rg-high.solid { fill: #e4b07a; }
+#map path.state.rg-plains.known, #map path.state.rg-plains.solid { fill: #e6d06a; }
+#map path.state.rg-lakes.known, #map path.state.rg-lakes.solid { fill: #8ebfe0; }
+#map path.state.rg-river.known, #map path.state.rg-river.solid { fill: #d9a08c; }
+#map path.state.rg-low.known, #map path.state.rg-low.solid { fill: #a8d07a; }
+#map path.state.rg-mid.known, #map path.state.rg-mid.solid { fill: #b9a6d8; }
+#map path.state.rg-tide.known, #map path.state.rg-tide.solid { fill: #f0b56a; }
+
+#map path.state.cooking {
+  fill: unset;
+  stroke: #8a5a12;
+  stroke-width: 2.6;
+}
+#map path.state.rg-pacific.cooking { fill: #7ec8cc; }
+#map path.state.rg-high.cooking { fill: #e4b07a; }
+#map path.state.rg-plains.cooking { fill: #e6d06a; }
+#map path.state.rg-lakes.cooking { fill: #8ebfe0; }
+#map path.state.rg-river.cooking { fill: #d9a08c; }
+#map path.state.rg-low.cooking { fill: #a8d07a; }
+#map path.state.rg-mid.cooking { fill: #b9a6d8; }
+#map path.state.rg-tide.cooking { fill: #f0b56a; }
+
 #map path.state.shining {
-  fill: color-mix(in srgb, var(--room) 22%, #5ecfb3);
+  fill: unset;
+  stroke: #1f6b5a;
 }
+#map path.state.rg-pacific.shining { fill: #5fb8bd; }
+#map path.state.rg-high.shining { fill: #d89a5e; }
+#map path.state.rg-plains.shining { fill: #dcc34a; }
+#map path.state.rg-lakes.shining { fill: #6aafd6; }
+#map path.state.rg-river.shining { fill: #cc8b74; }
+#map path.state.rg-low.shining { fill: #8fc25e; }
+#map path.state.rg-mid.shining { fill: #a48dcc; }
+#map path.state.rg-tide.shining { fill: #e6a24a; }
+
 #map path.state.room {
-  fill: color-mix(in srgb, var(--room) 35%, #ffe08a);
   stroke: #2B2A38;
+  stroke-width: 2.5;
 }
-#map path.state.ask { fill: #ffd54a; }
+#map path.state.ask {
+  stroke: #2B2A38;
+  stroke-width: 3;
+  fill: #ffe36a;
+}
 #map path.state.miss { fill: #f3d6d1; }
-#map path.state.dim { opacity: 0.38; }
+#map path.state.dim { opacity: 0.42; }
 
 .room-key {
   display: flex; flex-wrap: wrap; gap: 6px 8px;
@@ -39,11 +73,11 @@
 .room-key .rk i {
   width: 10px; height: 10px; border-radius: 50%; display: block;
 }
-.rk-pacific i { background: #9fd9dc; }
-.rk-high i { background: #e7c3a6; }
-.rk-plains i { background: #ead48a; }
-.rk-lakes i { background: #b4d7c6; }
-.rk-river i { background: #e2b6a6; }
-.rk-low i { background: #cfe39a; }
-.rk-mid i { background: #d2c4e6; }
-.rk-tide i { background: #f1c98a; }
+.rk-pacific i { background: #7ec8cc; }
+.rk-high i { background: #e4b07a; }
+.rk-plains i { background: #e6d06a; }
+.rk-lakes i { background: #8ebfe0; }
+.rk-river i { background: #d9a08c; }
+.rk-low i { background: #a8d07a; }
+.rk-mid i { background: #b9a6d8; }
+.rk-tide i { background: #f0b56a; }
