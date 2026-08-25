@@ -6,6 +6,7 @@
   <title>Star Map</title>
   <meta name="description" content="A quiet map for learning the fifty states and capitals." />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="rooms-tint.css" />
 </head>
 <body>
   <div id="screen-profiles" class="screen">
@@ -54,6 +55,7 @@
         <g id="land"></g>
         <g id="stars"></g>
       </svg>
+      <div id="room-key" class="room-key"></div>
     </div>
     <div class="doors">
       <button class="door" id="door-look" onclick="startLook()">
@@ -134,6 +136,7 @@
   <script src="data.js"></script>
   <script src="app-core.js"></script>
   <script src="app-play.js"></script>
+  <script src="rooms-tint.js"></script>
   <script src="yomple-sync.js"></script>
   <script src="yomple-family.js"></script>
 </body>
