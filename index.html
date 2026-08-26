@@ -13,14 +13,16 @@
     <div class="profiles">
       <h1>Who is walking the map?</h1>
       <div id="profile-grid" class="grid"></div>
-      <label style="display:block;margin:18px 0 6px;font-weight:700;color:var(--soft)">Use a name I already have</label>
-      <input id="find-user" type="text" placeholder="type the player name" maxlength="18"
-             style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit">
-      <div class="row" style="justify-content:center;margin-top:12px">
-        <button class="primary" onclick="findHall()">Find my map</button>
-        <button class="softbtn" onclick="showCreate()">New walker</button>
+      <div id="who-find-block">
+        <label style="display:block;margin:18px 0 6px;font-weight:700;color:var(--soft)">Use a name I already have</label>
+        <input id="find-user" type="text" placeholder="type the player name" maxlength="18"
+               style="width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--line);font:inherit">
+        <div class="row" style="justify-content:center;margin-top:12px">
+          <button class="primary" onclick="findHall()">Find my map</button>
+          <button class="softbtn" onclick="showCreate()">New walker</button>
+        </div>
+        <p style="text-align:center;margin-top:18px"><button class="ghost" onclick="showRecover()">Parent: recover household</button></p>
       </div>
-      <p style="text-align:center;margin-top:18px"><button class="ghost" onclick="showRecover()">Parent: recover household</button></p>
     </div>
   </div>
   <div id="screen-create" class="screen">
