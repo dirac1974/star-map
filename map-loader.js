@@ -4,16 +4,6 @@ function pathCount() {
   return Object.keys(window.MAP_PATHS || {}).length;
 }
 
-function loadScript(src) {
-  return new Promise(function (resolve, reject) {
-    var s = document.createElement("script");
-    s.src = src;
-    s.onload = function () { resolve(true); };
-    s.onerror = function () { reject(new Error(src)); };
-    document.head.appendChild(s);
-  });
-}
-
 function parseGistText(txt) {
   var re = /\{id:"([A-Z]{2})",n:"[^"]*",d:"([^"]+)"\}/g;
   var m;
@@ -23,21 +13,9 @@ function parseGistText(txt) {
   }
 }
 
-function loadLocalParts() {
-  var parts = [];
-  for (var i = 1; i <= 11; i++) parts.push("map-part-" + i + ".js");
-  return parts.reduce(function (p, src) {
-    return p.then(function () {
-      return loadScript(src);
-    }).catch(function () {
-      return false;
-    });
-  }, Promise.resolve());
-}
-
-function loadGistFallback() {
+function loadGist() {
   if (pathCount() >= 50) return Promise.resolve();
-  return fetch("https://gist.githubusercontent.com/NPashaP/a74faf20b492ad377312/raw/uStates.js")
+  return fetch("https://gist.githubusercontent.com/NPashaP/a74faf20b492ad377312/raw/uStates.js?cachebust=1")
     .then(function (r) {
       if (!r.ok) throw new Error("gist " + r.status);
       return r.text();
@@ -45,11 +23,6 @@ function loadGistFallback() {
     .then(parseGistText);
 }
 
-window.__mapReady = loadLocalParts()
-  .then(loadGistFallback)
-  .then(function () {
-    if (pathCount() < 48) console.warn("Map outlines incomplete:", pathCount());
-  })
-  .catch(function (err) {
-    console.warn("Map outlines did not load.", err);
-  });
+window.__mapReady = loadGist().catch(function (err) {
+  console.warn("Map outlines did not load.", err);
+});
