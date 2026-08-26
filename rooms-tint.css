@@ -1,5 +1,4 @@
-/* Eight palace rooms. Color is the room, not the state.
-   Progress stays on stars and strokes so the map does not fight itself. */
+/* Eight palace rooms. Color is the room, not the state. */
 #map path.state.rg-pacific { fill: #7ec8cc; }
 #map path.state.rg-high { fill: #e4b07a; }
 #map path.state.rg-plains { fill: #e6d06a; }
@@ -9,10 +8,6 @@
 #map path.state.rg-mid { fill: #b9a6d8; }
 #map path.state.rg-tide { fill: #f0b56a; }
 
-#map path.state.known,
-#map path.state.solid {
-  fill: unset;
-}
 #map path.state.rg-pacific.known, #map path.state.rg-pacific.solid { fill: #7ec8cc; }
 #map path.state.rg-high.known, #map path.state.rg-high.solid { fill: #e4b07a; }
 #map path.state.rg-plains.known, #map path.state.rg-plains.solid { fill: #e6d06a; }
@@ -22,11 +17,7 @@
 #map path.state.rg-mid.known, #map path.state.rg-mid.solid { fill: #b9a6d8; }
 #map path.state.rg-tide.known, #map path.state.rg-tide.solid { fill: #f0b56a; }
 
-#map path.state.cooking {
-  fill: unset;
-  stroke: #8a5a12;
-  stroke-width: 2.6;
-}
+#map path.state.cooking { stroke: #8a5a12; stroke-width: 2.6; }
 #map path.state.rg-pacific.cooking { fill: #7ec8cc; }
 #map path.state.rg-high.cooking { fill: #e4b07a; }
 #map path.state.rg-plains.cooking { fill: #e6d06a; }
@@ -36,10 +27,7 @@
 #map path.state.rg-mid.cooking { fill: #b9a6d8; }
 #map path.state.rg-tide.cooking { fill: #f0b56a; }
 
-#map path.state.shining {
-  fill: unset;
-  stroke: #1f6b5a;
-}
+#map path.state.shining { stroke: #1f6b5a; }
 #map path.state.rg-pacific.shining { fill: #5fb8bd; }
 #map path.state.rg-high.shining { fill: #d89a5e; }
 #map path.state.rg-plains.shining { fill: #dcc34a; }
@@ -49,15 +37,8 @@
 #map path.state.rg-mid.shining { fill: #a48dcc; }
 #map path.state.rg-tide.shining { fill: #e6a24a; }
 
-#map path.state.room {
-  stroke: #2B2A38;
-  stroke-width: 2.5;
-}
-#map path.state.ask {
-  stroke: #2B2A38;
-  stroke-width: 3;
-  fill: #ffe36a;
-}
+#map path.state.room { stroke: #2B2A38; stroke-width: 2.5; }
+#map path.state.ask { stroke: #2B2A38; stroke-width: 3; fill: #ffe36a; }
 #map path.state.miss { fill: #f3d6d1; }
 #map path.state.dim { opacity: 0.42; }
 
