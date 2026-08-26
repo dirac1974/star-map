@@ -47,6 +47,7 @@ function consumeYompleHandoff() {
       if (person.family_code) store.familyCode = person.family_code;
       try { localStorage.setItem("star-map-v1", JSON.stringify(store)); } catch (e) {}
     }
+    if (typeof cloudSaveActive === "function") cloudSaveActive();
   }
 
   var lookup = typeof findAnyYomplePerson === "function"
@@ -72,7 +73,16 @@ function consumeYompleHandoff() {
 function hideFindChrome() {
   if (!window.YOMPLE_FROM_HUB) return;
   var block = document.getElementById("who-find-block");
-  if (block) block.style.display = "none";
+  if (block) {
+    block.style.display = "none";
+    return;
+  }
+  var find = document.getElementById("find-user");
+  if (find) {
+    var card = find.parentNode;
+    if (card && card !== document.body) card.style.display = "none";
+    find.style.display = "none";
+  }
 }
 
 function wireWhoChip() {
@@ -88,8 +98,9 @@ function wireWhoChip() {
 if (typeof afterPaths === "function") {
   var _afterPathsArrive = afterPaths;
   afterPaths = function () {
-    consumeYompleHandoff().then(function () {
-      _afterPathsArrive();
+    consumeYompleHandoff().then(function (ok) {
+      if (ok && store.activeId && typeof renderHome === "function") renderHome();
+      else _afterPathsArrive();
       hideFindChrome();
       wireWhoChip();
     });
