@@ -73,16 +73,7 @@ function consumeYompleHandoff() {
 function hideFindChrome() {
   if (!window.YOMPLE_FROM_HUB) return;
   var block = document.getElementById("who-find-block");
-  if (block) {
-    block.style.display = "none";
-    return;
-  }
-  var find = document.getElementById("find-user");
-  if (find) {
-    var card = find.parentNode;
-    if (card && card !== document.body) card.style.display = "none";
-    find.style.display = "none";
-  }
+  if (block) block.style.display = "none";
 }
 
 function wireWhoChip() {
@@ -98,9 +89,9 @@ function wireWhoChip() {
 if (typeof afterPaths === "function") {
   var _afterPathsArrive = afterPaths;
   afterPaths = function () {
-    consumeYompleHandoff().then(function (ok) {
-      if (ok && store.activeId && typeof renderHome === "function") renderHome();
-      else _afterPathsArrive();
+    consumeYompleHandoff().then(function () {
+      if (typeof buildSvg === "function") buildSvg();
+      _afterPathsArrive();
       hideFindChrome();
       wireWhoChip();
     });
@@ -118,6 +109,8 @@ if (typeof showProfiles === "function") {
 if (typeof renderHome === "function") {
   var _renderHomeArrive = renderHome;
   renderHome = function () {
+    var land = document.getElementById("land");
+    if (land && !land.childNodes.length && typeof buildSvg === "function") buildSvg();
     _renderHomeArrive();
     wireWhoChip();
   };
