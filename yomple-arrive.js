@@ -1,50 +1,113 @@
-(function(){
+function consumeYompleHandoff() {
   var q = new URLSearchParams(location.search);
-  var u = (typeof slugName==="function" ? slugName(q.get("u")||q.get("who")||"") : String(q.get("u")||"").toLowerCase());
-  var f = String(q.get("f")||q.get("family")||"").trim().toUpperCase();
-  window.YOMPLE_HANDSHAKE = !!(u && u !== "player") || q.get("from") === "yomple";
-  if (f && f.indexOf("-")>0) store.familyCode = f;
+  var rawU = (q.get("u") || q.get("who") || "").trim();
+  var f = (q.get("f") || q.get("family") || "").trim();
+  var username = typeof slugName === "function" ? slugName(rawU) : rawU.toLowerCase();
+  window.YOMPLE_FROM_HUB = q.get("from") === "yomple" || !!(username && username !== "player");
 
-  function adopt(row, progress){
-    if (typeof adoptPerson==="function") adoptPerson(row, progress||{});
-    else {
-      var id = "u-"+(row.username||u);
-      store.profiles = store.profiles || [];
-      store.profiles.push({ id:id, name:row.display_name||u, username:row.username||u, avatar:row.avatar||"\u2b50", pin:row.pin||"", created:Date.now() });
-      store.activeId = id;
-      localStorage.setItem("star-map-v1", JSON.stringify(store));
-    }
+  if (f && f.indexOf("-") > 0) {
+    store.familyCode = f.toUpperCase();
+    try { localStorage.setItem("star-map-v1", JSON.stringify(store)); } catch (e) {}
   }
-  function land(){
-    if (typeof renderHome==="function") renderHome();
-  }
-  function takeHandshake(done){
-    if (!u || u==="player") { done(); return; }
-    var local = (store.profiles||[]).find(function(p){ return p.username===u || slugName(p.name)===u; });
-    if (local) { store.activeId = local.id; localStorage.setItem("star-map-v1", JSON.stringify(store)); done(); return; }
-    if (typeof findAnyYomplePerson==="function") {
-      findAnyYomplePerson(u).then(function(hit){
-        if (hit && hit.table==="star_players") applyCloudRow(hit.row);
-        else if (hit && hit.row) adopt(hit.row, {});
-        else adopt({ username:u, display_name:u, avatar:"\u2b50" }, {});
-        done();
-      }).catch(function(){ adopt({ username:u, display_name:u }, {}); done(); });
-    } else {
-      adopt({ username:u, display_name:u }, {});
-      done();
-    }
+  if (!username || username === "player") return Promise.resolve(false);
+
+  var local = (store.profiles || []).find(function (p) {
+    return p.username === username || (typeof slugName === "function" && slugName(p.name) === username);
+  });
+  if (local) {
+    store.activeId = local.id;
+    if (!local.username) local.username = username;
+    try { localStorage.setItem("star-map-v1", JSON.stringify(store)); } catch (e) {}
+    return Promise.resolve(true);
   }
 
-  if (typeof afterPaths === "function") {
-    var _afterPaths = afterPaths;
-    afterPaths = function(){
-      if (window.YOMPLE_HANDSHAKE) {
-        if (typeof buildSvg==="function") buildSvg();
-        takeHandshake(land);
-        return;
-      }
-      if (store.activeId) { _afterPaths(); return; }
-      location.replace("https://yomple.com/");
+  function enterEmpty(row) {
+    row = row || {};
+    var person = {
+      username: row.username || username,
+      display_name: row.display_name || row.name || rawU || username,
+      avatar: row.avatar || "\u2b50",
+      pin: row.pin || "",
+      family_code: row.family_code || store.familyCode || f || null,
+      fun: row.fun || {}
     };
+    if (typeof adoptPerson === "function") adoptPerson(person, {});
+    else {
+      var id = "u-" + person.username;
+      store.profiles = store.profiles || [];
+      store.profiles.push({
+        id: id,
+        name: person.display_name,
+        username: person.username,
+        avatar: person.avatar,
+        pin: person.pin,
+        created: Date.now()
+      });
+      store.activeId = id;
+      if (person.family_code) store.familyCode = person.family_code;
+      try { localStorage.setItem("star-map-v1", JSON.stringify(store)); } catch (e) {}
+    }
   }
-})();
+
+  var lookup = typeof findAnyYomplePerson === "function"
+    ? findAnyYomplePerson(username)
+    : Promise.resolve(null);
+
+  return lookup.then(function (hit) {
+    if (hit && hit.table === "star_players" && hit.row) {
+      if (typeof applyCloudRow === "function") applyCloudRow(hit.row);
+      else enterEmpty(hit.row);
+    } else if (hit && hit.row) {
+      enterEmpty(hit.row);
+    } else {
+      enterEmpty({ username: username, display_name: rawU, family_code: store.familyCode || f });
+    }
+    return true;
+  }).catch(function () {
+    enterEmpty({ username: username, display_name: rawU, family_code: store.familyCode || f });
+    return true;
+  });
+}
+
+function hideFindChrome() {
+  if (!window.YOMPLE_FROM_HUB) return;
+  var block = document.getElementById("who-find-block");
+  if (block) block.style.display = "none";
+}
+
+function wireWhoChip() {
+  var badge = document.getElementById("who-badge");
+  if (!badge) return;
+  badge.style.cursor = "pointer";
+  badge.title = "Switch player";
+  badge.onclick = function () {
+    if (typeof showProfiles === "function") showProfiles();
+  };
+}
+
+if (typeof afterPaths === "function") {
+  var _afterPathsArrive = afterPaths;
+  afterPaths = function () {
+    consumeYompleHandoff().then(function () {
+      _afterPathsArrive();
+      hideFindChrome();
+      wireWhoChip();
+    });
+  };
+}
+
+if (typeof showProfiles === "function") {
+  var _showProfilesArrive = showProfiles;
+  showProfiles = function () {
+    _showProfilesArrive();
+    hideFindChrome();
+  };
+}
+
+if (typeof renderHome === "function") {
+  var _renderHomeArrive = renderHome;
+  renderHome = function () {
+    _renderHomeArrive();
+    wireWhoChip();
+  };
+}
