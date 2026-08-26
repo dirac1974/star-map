@@ -3,7 +3,7 @@ var SB_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZ
 var YOMPLE_MODULE = "star";
 var YOMPLE_TABLE = "star_players";
 var YOMPLE_STORE = "star-map-v1";
-var YOMPLE_SISTERS = ["hop_players","bloom_players","garden_players","star_players"];
+var YOMPLE_SISTERS = ["star_players","hop_players","bloom_players","garden_players","field_players"];
 var cloudTimer = null;
 
 function slugName(s){
@@ -45,7 +45,7 @@ function payloadForActive(){
   return {
     username: p.username,
     display_name: p.name,
-    avatar: p.avatar || "⭐",
+    avatar: p.avatar || "\u2b50",
     pin: p.pin || null,
     family_code: store.familyCode || null,
     progress: (store.progress && store.progress[p.id]) || {},
@@ -105,7 +105,7 @@ function findHall(){
   var input = document.getElementById("find-user");
   var username = slugName(input && input.value);
   if (!username || username === "player") { toast("Type the saved player name"); return; }
-  toast("Looking for "+username+"…");
+  toast("Looking for "+username+"\u2026");
   findAnyYomplePerson(username).then(function(hit){
     if (!hit) { toast("No Yomple player with that name yet"); return; }
     var row = hit.row;
