@@ -19,24 +19,37 @@ function sbHeaders(extra){
   if (extra) Object.keys(extra).forEach(function(k){ h[k] = extra[k]; });
   return h;
 }
+function sbRpc(fn, args, token){
+  return fetch(SB_URL+"/rest/v1/rpc/"+fn, {
+    method: "POST",
+    headers: {
+      apikey: SB_KEY,
+      Authorization: "Bearer "+(token || SB_KEY),
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(args || {})
+  }).then(function(r){ return r.ok ? r.json() : null; });
+}
 function cloudGetTable(table, username){
-  return fetch(SB_URL+"/rest/v1/"+table+"?username=eq."+encodeURIComponent(username), { headers: sbHeaders() })
-    .then(function(r){ return r.json(); })
-    .then(function(rows){ return (rows && rows[0]) || null; })
+  return sbRpc("yomple_player_find", { p_table: table, p_username: username })
     .catch(function(){ return null; });
 }
 function cloudGet(username){ return cloudGetTable(YOMPLE_TABLE, username); }
 function findAnyYomplePerson(username){
-  var chain = Promise.resolve(null);
-  YOMPLE_SISTERS.forEach(function(table){
-    chain = chain.then(function(found){
-      if (found) return found;
-      return cloudGetTable(table, username).then(function(row){
-        return row ? { table: table, row: row } : null;
-      });
-    });
-  });
-  return chain;
+  return sbRpc("yomple_player_find_any", { p_username: username, p_prefer: YOMPLE_TABLE })
+    .then(function(row){ return row ? { table: row.table, row: row } : null; })
+    .catch(function(){ return null; });
+}
+/* Rows come back without a PIN. When one is set the PIN must be typed, and the
+   server compares it; the typed PIN is then cached locally as before. */
+function yompleClaim(table, row){
+  if (!row) return Promise.resolve(null);
+  if (!row.has_pin) return Promise.resolve(row);
+  var typed = window.prompt("PIN for "+(row.display_name || row.username));
+  if (!typed) return Promise.resolve(null);
+  return sbRpc("yomple_player_claim", { p_table: table, p_username: row.username, p_pin: typed })
+    .then(function(full){ if (full) full.pin = typed; return full; })
+    .catch(function(){ return null; });
 }
 function payloadForActive(){
   var p = (store.profiles||[]).find(function(x){ return x.id === store.activeId; });
@@ -56,10 +69,17 @@ function payloadForActive(){
 function cloudSaveActive(){
   var body = payloadForActive();
   if (!body) return;
-  fetch(SB_URL+"/rest/v1/"+YOMPLE_TABLE, {
-    method: "POST",
-    headers: sbHeaders({ Prefer: "resolution=merge-duplicates,return=minimal" }),
-    body: JSON.stringify(body)
+  sbRpc("yomple_player_upsert", {
+    p_table: YOMPLE_TABLE,
+    p_username: body.username,
+    p_pin: body.pin || null,
+    p_row: {
+      display_name: body.display_name,
+      avatar: body.avatar,
+      family_code: body.family_code || null,
+      progress: body.progress,
+      fun: body.fun
+    }
   }).catch(function(){});
 }
 function scheduleCloudSave(){
@@ -80,7 +100,7 @@ function adoptPerson(row, progress){
     existing.name = row.display_name;
     existing.avatar = row.avatar;
     existing.username = row.username;
-    existing.pin = row.pin || "";
+    existing.pin = row.pin || existing.pin || "";
     id = existing.id;
   } else {
     store.profiles = store.profiles || [];
@@ -108,15 +128,13 @@ function findHall(){
   toast("Looking for "+username+"\u2026");
   findAnyYomplePerson(username).then(function(hit){
     if (!hit) { toast("No Yomple player with that name yet"); return; }
-    var row = hit.row;
-    if (row.pin) {
-      var pin = window.prompt("PIN for "+row.display_name);
-      if (pin !== row.pin) { toast("PIN did not match"); return; }
-    }
-    if (row.family_code) store.familyCode = row.family_code;
-    if (hit.table === YOMPLE_TABLE) applyCloudRow(row);
-    else adoptPerson(row, {});
-    toast("Welcome back, "+row.display_name);
-    setTimeout(renderHome, 400);
+    return yompleClaim(hit.table, hit.row).then(function(row){
+      if (!row) { toast("PIN did not match"); return; }
+      if (row.family_code) store.familyCode = row.family_code;
+      if (hit.table === YOMPLE_TABLE) applyCloudRow(row);
+      else adoptPerson(row, {});
+      toast("Welcome back, "+row.display_name);
+      setTimeout(renderHome, 400);
+    });
   });
 }

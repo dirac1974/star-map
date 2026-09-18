@@ -55,15 +55,19 @@ function consumeYompleHandoff() {
     : Promise.resolve(null);
 
   return lookup.then(function (hit) {
-    if (hit && hit.table === "star_players" && hit.row) {
-      if (typeof applyCloudRow === "function") applyCloudRow(hit.row);
-      else enterEmpty(hit.row);
-    } else if (hit && hit.row) {
-      enterEmpty(hit.row);
-    } else {
+    if (!hit || !hit.row) {
       enterEmpty({ username: username, display_name: rawU, family_code: store.familyCode || f });
+      return true;
     }
-    return true;
+    var claim = (typeof yompleClaim === "function")
+      ? yompleClaim(hit.table, hit.row)
+      : Promise.resolve(hit.row);
+    return claim.then(function (row) {
+      if (!row) return true;
+      if (hit.table === "star_players" && typeof applyCloudRow === "function") applyCloudRow(row);
+      else enterEmpty(row);
+      return true;
+    });
   }).catch(function () {
     enterEmpty({ username: username, display_name: rawU, family_code: store.familyCode || f });
     return true;
