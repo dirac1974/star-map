@@ -93,11 +93,17 @@ function wireWhoChip() {
 if (typeof afterPaths === "function") {
   var _afterPathsArrive = afterPaths;
   afterPaths = function () {
-    consumeYompleHandoff().then(function () {
+    consumeYompleHandoff().then(function (landed) {
       if (typeof buildSvg === "function") buildSvg();
       _afterPathsArrive();
       hideFindChrome();
       wireWhoChip();
+      // A sign-in that came off the URL: freeze it back into the URL, and on an iPhone in Safari say
+      // the one thing that makes it stick.
+      if (landed && window.YompleStay) {
+        var me = (store.profiles || []).find(function (p) { return p.id === store.activeId; });
+        if (me) window.YompleStay.arrived(me.username || slugName(me.name), store.familyCode);
+      }
     });
   };
 }
