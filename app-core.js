@@ -156,6 +156,12 @@ function setMission(html) {
 function renderHome() {
   mode = "home";
   session = "home";
+  // Whoever is signed in, the address bar says so, so a bookmark or an Add to Home Screen icon taken
+  // at any moment comes back signed in. Stamping the same URL twice is a no-op.
+  var who = (store.profiles || []).find(function (x) { return x.id === store.activeId; });
+  if (who && window.YompleStay) {
+    window.YompleStay.stamp(who.username || (typeof slugName === "function" ? slugName(who.name) : ""), store.familyCode);
+  }
   document.getElementById("look-done").style.display = "none";
   closeSheet();
   const p = activeProg();
